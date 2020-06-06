@@ -7,19 +7,29 @@ CPU::CPU()
 		this->ram[i] = 0;
 	}
 	this->ram[0] = ASM::write;
-	this->ram[1] = 4;
-	this->ram[2] = -5;
-	this->ram[3] = ASM::jump;
-	this->ram[4] = 0;
+	this->ram[1] = 257;
+	this->ram[2] = 1;
+	this->ram[3] = ASM::add;
+	this->ram[4] = 256;
+	this->ram[5] = 257;
+	this->ram[6] = 258;
+	this->ram[7] = ASM::move;
+	this->ram[8] = 257;
+	this->ram[9] = 256;
+	this->ram[10] = ASM::move;
+	this->ram[11] = 258;
+	this->ram[12] = 257;
+	this->ram[13] = ASM::out;
+	this->ram[14] = 258;
+	this->ram[15] = ASM::jump;
+	this->ram[16] = 3;
 }
 
 void CPU::run()
 {
-	std::string null;
 for (;;)
 {
 	this->_decode();
-	std::getline(std::cin, null);
 }
 }
 
@@ -30,7 +40,7 @@ void CPU::print(int addr)
 	{
 		return;
 	}
-	this->_dump(addr);
+	this->_dumpIns(addr);
 }
 
 void CPU::write(int arg1, int arg2)
@@ -45,49 +55,58 @@ void CPU::write(int arg1, int arg2)
 
 void CPU::step()
 {
-	for (int i = this->pc; i < this->pc + 3; i++)
-	{
-		std::cout << "Addr :" << i << std::endl;
-		this->_dump(i);
-		std::cout << std::endl;
-	}
 	this->_decode();
+	std::cout << "Addr: " << this->pc << std::endl;
+	this->_dumpIns(this->pc);
 }
 
-void CPU::_dump(int addr)
+void CPU::_dumpIns(int addr)
 {
 	switch (this->ram[addr])
 	{
 	case ASM::add:
 		std::cout << "Ins: " << "ADD" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Src Addr A: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Src Addr B: " << this->ram[addr + 2] << std::endl;
+		std::cout << "Dest Addr: " << this->ram[addr + 3] << std::endl;
 		break;
 	case ASM::sub:
-		std::cout << "Ins: " << "SUB" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Ins: " << "SUBTRACT" << std::endl;
+		std::cout << "Src Addr A: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Src Addr B: " << this->ram[addr + 2] << std::endl;
+		std::cout << "Dest Addr: " << this->ram[addr + 3] << std::endl;
 		break;
 	case ASM::jump:
 		std::cout << "Ins: " << "JUMP" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Jump Addr: " << this->ram[addr + 1] << std::endl;
 		break;
 	case ASM::jumpgt:
 		std::cout << "Ins: " << "JUMPGT" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Cmp Addr A: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Cmp Addr B: " << this->ram[addr + 2] << std::endl;
+		std::cout << "Jump Addr: " << this->ram[addr + 3] << std::endl;
 		break;
 	case ASM::jumplt:
 		std::cout << "Ins: " << "JUMPLT" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Cmp Addr A: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Cmp Addr B: " << this->ram[addr + 2] << std::endl;
+		std::cout << "Jump Addr: " << this->ram[addr + 3] << std::endl;
 		break;
 	case ASM::write:
 		std::cout << "Ins: " << "WRITE" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;;
+		std::cout << "Dest Addr: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Value: " << this->ram[addr + 2] << std::endl;
 		break;
 	case ASM::move:
 		std::cout << "Ins: " << "MOVE" << std::endl;
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Src Addr A: " << this->ram[addr + 1] << std::endl;
+		std::cout << "Dest Addr B: " << this->ram[addr + 2] << std::endl;
 		break;
 	case ASM::null:
-		std::cout << "Data: " << this->ram[addr] << std::endl;
+		std::cout << "Ins: " << "NULL" << std::endl;
+		break;
+	case ASM::out:
+		std::cout << "Ins: " << "OUTPUT" << std::endl;
 		break;
 	default:
 		std::cout << "Data: " << this->ram[addr] << std::endl;
@@ -135,10 +154,26 @@ void CPU::_decode()
 	case ASM::move:
 		this->_move();
 		return;
+	case ASM::out:
+		this->_out();
+		return;
 	default: //Should never reach this and if we do, assume we encountered a NOP instruction
 		this->_null();
 		return;
 	}
+}
+
+void CPU::_out()
+{
+	// X = Instruction
+	// X+1 = Output Addr
+
+	int dest = this->ram[this->pc + 1];
+
+	std::cout << "Addr: " << dest << " Value: " << this->ram[dest] << std::endl;
+
+	// 2 Byte Instruction
+	this->pc += 2;
 }
 
 void CPU::_null()

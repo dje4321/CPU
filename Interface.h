@@ -1,7 +1,7 @@
 #pragma once
 #include "CPU.h"
 
-std::string input(std::string msg);
+std::string getinput(std::string msg);
 
 class Interface
 {
@@ -10,6 +10,7 @@ public:
 	~Interface();
 	void shell();
 private:
+	void _dump();
 	CPU* cpu;
 	std::string input;
 	std::string arg1;

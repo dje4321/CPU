@@ -5,9 +5,6 @@
 int main()
 {
     Interface shell;
-    shell.shell();
-    //CPU* cpu;
-    //cpu = new CPU;
-    //cpu->run();
+    for (;;) { shell.shell(); }
     return 0;
 }

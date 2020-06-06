@@ -11,7 +11,10 @@ enum ASM
 	jump,
 	jumpgt,
 	jumplt,
-	move
+	move,
+	out,
+	pause,
+	halt
 };
 
 class CPU
@@ -36,6 +39,7 @@ private:
 	void _jumpgt();
 	void _jumplt();
 	void _move();
-	void _dump(int addr);
+	void _out();
+	void _dumpIns(int addr);
 };
 
