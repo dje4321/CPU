@@ -18,7 +18,6 @@ void CPU::run()
 	std::string null;
 for (;;)
 {
-	this->_dump(0, 16);
 	this->_decode();
 	std::getline(std::cin, null);
 }
@@ -26,54 +25,73 @@ for (;;)
 
 void CPU::print(int addr)
 {
-	this->_dump(addr, 1, false);
+	//Needs to validate that we are inbounds since we are a public function
+	if (addr < 0 || addr > this->_ram_size)
+	{
+		return;
+	}
+	this->_dump(addr);
+}
+
+void CPU::write(int arg1, int arg2)
+{
+	//Do out of bounds checking
+	if (arg1 < 0 || arg1 > this->_ram_size)
+	{
+		return;
+	}
+	this->ram[arg1] = arg2;
 }
 
 void CPU::step()
 {
-	this->_dump(0, 16);
+	for (int i = this->pc; i < this->pc + 3; i++)
+	{
+		std::cout << "Addr :" << i << std::endl;
+		this->_dump(i);
+		std::cout << std::endl;
+	}
 	this->_decode();
 }
 
-void CPU::_dump(int start, int size, bool pc)
+void CPU::_dump(int addr)
 {
-	if (pc == true) { std::cout << "PC:" << this->pc << std::endl; }
-	for (int i = start; i < size; i++)
+	switch (this->ram[addr])
 	{
-		if (this->pc == i)
-		{
-			std::cout << ">";
-		}
-		switch (this->ram[i])
-		{
-		case ASM::add:
-			std::cout << i << ": " << "ADD :" << this->ram[i] << std::endl;
-			break;
-		case ASM::sub:
-			std::cout << i << ": " << "SUB :" << this->ram[i] << std::endl;
-			break;
-		case ASM::jump:
-			std::cout << i << ": " << "JUMP :" << this->ram[i] << std::endl;
-			break;
-		case ASM::jumpgt:
-			std::cout << i << ": " << "JUMPGT :" << this->ram[i] << std::endl;
-			break;
-		case ASM::jumplt:
-			std::cout << i << ": " << "JUMPLT :" << this->ram[i] << std::endl;
-			break;
-		case ASM::write:
-			std::cout << i << ": " << "WRITE :" << this->ram[i] << std::endl;
-			break;
-		case ASM::move:
-			std::cout << i << ": " << "MOVE :" << this->ram[i] << std::endl;
-			break;
-		case ASM::null:
-			std::cout << i << ": " << this->ram[i] << std::endl;
-			break;
-		default:
-			std::cout << i << ": " << this->ram[i] << std::endl;
-			break;
-		}
+	case ASM::add:
+		std::cout << "Ins: " << "ADD" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::sub:
+		std::cout << "Ins: " << "SUB" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::jump:
+		std::cout << "Ins: " << "JUMP" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::jumpgt:
+		std::cout << "Ins: " << "JUMPGT" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::jumplt:
+		std::cout << "Ins: " << "JUMPLT" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::write:
+		std::cout << "Ins: " << "WRITE" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;;
+		break;
+	case ASM::move:
+		std::cout << "Ins: " << "MOVE" << std::endl;
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	case ASM::null:
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
+	default:
+		std::cout << "Data: " << this->ram[addr] << std::endl;
+		break;
 	}
 }
 
@@ -84,7 +102,7 @@ CPU::~CPU()
 
 void CPU::_decode()
 {
-	//Check if the program counter has gone out of bounds
+	//Check if the program counter has gone out of bounds and if it has, return to entrypoint
 	if (this->pc < 0 || this->pc > this->_ram_size)
 	{
 		this->pc = 0;
@@ -93,28 +111,28 @@ void CPU::_decode()
 	//Execute the instruction depending on what data is in the program counter
 	switch (this->ram[this->pc])
 	{
-	case null:
+	case ASM::null:
 		this->_null();
 		return;
-	case write:
+	case ASM::write:
 		this->_write();
 		return;
-	case add:
+	case ASM::add:
 		this->_add();
 		return;
-	case sub:
+	case ASM::sub:
 		this->_sub();
 		return;
-	case jump:
+	case ASM::jump:
 		this->_jump();
 		return;
-	case jumpgt:
+	case ASM::jumpgt:
 		this->_jumpgt();
 		break;
-	case jumplt:
+	case ASM::jumplt:
 		this->_jumplt();
 		break;
-	case move:
+	case ASM::move:
 		this->_move();
 		return;
 	default: //Should never reach this and if we do, assume we encountered a NOP instruction

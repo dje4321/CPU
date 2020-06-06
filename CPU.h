@@ -22,6 +22,7 @@ public:
 	void run();
 	void step();
 	void print(int addr);
+	void write(int arg1, int arg2);
 private:
 	int pc{ 0 };
 	int _ram_size = 255 * 255;
@@ -35,6 +36,6 @@ private:
 	void _jumpgt();
 	void _jumplt();
 	void _move();
-	void _dump(int start, int size, bool pc = true);
+	void _dump(int addr);
 };
 
