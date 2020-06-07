@@ -73,7 +73,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::write);
+			this->cpu->write(startAddr, Opcode::write);
 			//Write the first argument offset by 1
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			//Write the second argument offset by 2
@@ -95,7 +95,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::add);
+			this->cpu->write(startAddr, Opcode::add);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
@@ -117,7 +117,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::sub);
+			this->cpu->write(startAddr, Opcode::subtract);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
@@ -135,7 +135,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::jump);
+			this->cpu->write(startAddr, Opcode::jump);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			loop = false;
@@ -155,7 +155,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::jumpgt);
+			this->cpu->write(startAddr, Opcode::jumpgt);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
@@ -177,7 +177,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::jumplt);
+			this->cpu->write(startAddr, Opcode::jumplt);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
@@ -197,7 +197,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::move);
+			this->cpu->write(startAddr, Opcode::move);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
@@ -214,7 +214,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::out);
+			this->cpu->write(startAddr, Opcode::out);
 			//Write each argument offest by the argument location
 			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
 			loop = false;
@@ -228,7 +228,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::pause);
+			this->cpu->write(startAddr, Opcode::pause);
 			loop = false;
 		}
 		if (this->arg1 == "halt") 
@@ -240,7 +240,7 @@ void Interface::_insert()
 			startAddr = std::stoi(this->arg2);
 
 			//Write the instruction to the start address
-			this->cpu->write(startAddr, ASM::halt);
+			this->cpu->write(startAddr, Opcode::halt);
 			loop = false;
 		}
 	} while (loop != false);

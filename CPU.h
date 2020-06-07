@@ -2,12 +2,12 @@
 #include <iostream>
 #include <string>
 
-enum ASM
+enum Opcode
 {
 	null = 0, //CPU::_null()
 	write,    //CPU::_write()
 	add,      //CPU::_add()
-	sub,      //CPU::_sub()
+	subtract, //CPU::_sub()
 	jump,     //CPU::_jump()
 	jumpgt,   //CPU::_jumpgt()
 	jumplt,   //CPU::_jumplt()
@@ -15,6 +15,40 @@ enum ASM
 	out,      //CPU::_out()
 	pause,    //CPU::_pause()
 	halt      //CPU::_halt()
+};
+
+struct Instruction
+{
+	int opcode;
+	int size;
+	void (*funcPtr)();
+};
+
+struct ASM
+{
+	Instruction null;
+	Instruction write;
+	Instruction add;
+	Instruction subtract;
+	Instruction jump;
+	Instruction jumpgt;
+	Instruction jumplt;
+	Instruction move;
+	Instruction out;
+	Instruction pause;
+	Instruction halt;
+};
+
+struct Ram
+{
+	int size = 255 * 255;
+	int memory[255 * 255]{ 0 };
+};
+
+struct Registers
+{
+	int pc;
+	bool halt;
 };
 
 class CPU
@@ -26,11 +60,13 @@ public:
 	void step();
 	void print(int addr);
 	void write(int arg1, int arg2);
+
 private:
-	int pc{ 0 };
-	bool halt;
-	int _ram_size = 255 * 255;
-	int ram[255 * 255];
+	Registers registers;
+	Ram ram;
+	ASM Assembly;
+
+private:
 	void _decode();
 	void _null();
 	void _write();
