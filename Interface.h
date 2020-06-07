@@ -1,5 +1,8 @@
 #pragma once
+#include <string>
+#include <vector>
 #include "CPU.h"
+#include "splitString.h"
 
 std::string getinput(std::string msg);
 
@@ -10,15 +13,12 @@ public:
 	~Interface();
 	void shell();
 private:
+	void _help();
 	void _dump();
 	void _write();
 	void _insert();
+
+	std::vector<std::string> argv;
 	CPU* cpu;
-	std::string input;
-	std::string arg1;
-	std::string arg2;
-	std::string arg3;
-	std::string arg4;
-	std::string arg5;
 };
 

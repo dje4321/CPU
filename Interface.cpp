@@ -6,13 +6,6 @@ std::string getinput(std::string msg)
 	std::cout << "$: " << msg;
 	std::getline(std::cin, tmp);
 
-	if (tmp == "")
-	{
-		std::cout << "Invalid Input!" << std::endl;
-		//Use recursion to until we get a valid input
-		tmp = getinput(msg);
-	}
-
 	return tmp;
 }
 
@@ -26,277 +19,98 @@ Interface::~Interface()
 	delete this->cpu;
 }
 
+void Interface::shell()
+{
+	bool loop = true;
+	do {
+		argv = splitString( getinput("") , ' ' );
+		
+		if (this->argv[0] == "help")  { this->_help(); }
+		if (this->argv[0] == "exit")  { loop = false; }
+		if (this->argv[0] == "dump")  { this->_dump(); }
+		if (this->argv[0] == "write") { this->_write(); }
+		if (this->argv[0] == "run") { this->cpu->run(); }
+	} while (loop != false);
+}
+
+void Interface::_help()
+{
+	if (this->argv.size() <= 1)
+	{
+		std::cout << "Avalible Commands" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "help" << std::endl;
+		std::cout << "exit" << std::endl;
+		std::cout << "dump" << std::endl;
+		std::cout << "write" << std::endl;
+		std::cout << "run" << std::endl;
+		return;
+	}
+	
+	if (this->argv[1] == "help")
+	{
+		std::cout << "help command" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Provides a help page for a command" << std::endl;
+		return;
+	}
+
+	if (this->argv[1] == "exit")
+	{
+		std::cout << "exit" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Exits the shell interface" << std::endl;
+		return;
+	}	
+	
+	if (this->argv[1] == "dump")
+	{
+		std::cout << "dump addr" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Dumps the instruction or data value from the specified address" << std::endl;
+		return;
+	}	
+	
+	if (this->argv[1] == "write")
+	{
+		std::cout << "write addr value" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Writes the value to the address" << std::endl;
+		return;
+	}	
+	
+	if (this->argv[1] == "run")
+	{
+		std::cout << "run" << std::endl;
+		std::cout << "-----------------" << std::endl;
+		std::cout << "Hands over execution to the CPU until a HALT instruction" << std::endl;
+		return;
+	}
+}
+
 void Interface::_dump()
 {
-	this->arg1 = getinput("What address to dump? ");
-	this->cpu->print( std::stoi(this->arg1) );
+	int addr = 0;
+	if (this->argv.size() > 1)
+	{
+		addr = std::stoi( argv[1] );
+	}
+	this->cpu->print(addr);
 }
 
 void Interface::_write()
 {
-	this->arg1 = getinput("What address to write? ");
-	this->arg2 = getinput("What value to write? ");
-	
-	this->cpu->write(std::stoi(this->arg1), std::stoi(this->arg2));
+	int addr;
+	int value;
+	if (this->argv.size() > 2)
+	{
+		addr = std::stoi(argv[1]);
+		value = std::stoi(argv[2]);
+	}
+	this->cpu->write(addr, value);
 }
 
 void Interface::_insert()
 {
-	bool loop = true;
-	do {
-		this->arg1 = getinput("What instruction to insert? ");
-		if (this->arg1 == "help") 
-		{
-			std::cout << "Avalible Commands" << std::endl;
-			std::cout << "-----------------" << std::endl;
-			std::cout << "write" << std::endl;
-			std::cout << "add" << std::endl;
-			std::cout << "subtract" << std::endl;
-			std::cout << "jump" << std::endl;
-			std::cout << "jumpgt" << std::endl;
-			std::cout << "jumplt" << std::endl;
-			std::cout << "move" << std::endl;
-			std::cout << "output" << std::endl;
-			std::cout << "pause" << std::endl;
-			std::cout << "halt" << std::endl;
-		}
-		if (this->arg1 == "write") 
-		{
-			//X = Instruction
-			//X+1 = Dest Addr
-			//X+2 = Value
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("What addr to write to? ");
-			this->arg4 = getinput("What value to write to the address? ");
 
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::write);
-			//Write the first argument offset by 1
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			//Write the second argument offset by 2
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			loop = false;
-		}
-		if (this->arg1 == "add") 
-		{
-			//X = Instruction
-			//X+1 = Source Addr 1
-			//X+2 = Source Addr 2
-			//X+3 = Dest Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Source Addr 1? ");
-			this->arg4 = getinput("Source Addr 2? ");
-			this->arg5 = getinput("Dest address? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::add);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			this->cpu->write(startAddr + 3, std::stoi(this->arg5));
-			loop = false;
-		}
-		if (this->arg1 == "subtract") 
-		{
-			//X = Instruction
-			//X+1 = Source Addr 1
-			//X+2 = Source Addr 2
-			//X+3 = Dest Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Source Addr 1? ");
-			this->arg4 = getinput("Source Addr 2? ");
-			this->arg5 = getinput("Dest address? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::subtract);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			this->cpu->write(startAddr + 3, std::stoi(this->arg5));
-			loop = false;
-		}
-		if (this->arg1 == "jump") 
-		{
-			//X = Instruction
-			//X+1 = Jump Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Jump Addr? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::jump);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			loop = false;
-		}
-		if (this->arg1 == "jumpgt") 
-		{
-			//X = Instruction
-			//X+1 = Cmp Addr 1
-			//X+2 = Cmp Addr 2
-			//X+3 = Dest Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Cmp Addr 1? ");
-			this->arg4 = getinput("Cmp Addr 2? ");
-			this->arg5 = getinput("Jump Addr? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::jumpgt);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			this->cpu->write(startAddr + 3, std::stoi(this->arg5));
-			loop = false;
-		}
-		if (this->arg1 == "jumplt") 
-		{
-			//X = Instruction
-			//X+1 = Cmp Addr 1
-			//X+2 = Cmp Addr 2
-			//X+3 = Dest Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Cmp Addr 1? ");
-			this->arg4 = getinput("Cmp Addr 2? ");
-			this->arg5 = getinput("Jump Addr? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::jumplt);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			this->cpu->write(startAddr + 3, std::stoi(this->arg5));
-			loop = false;
-		}
-		if (this->arg1 == "move") 
-		{
-			//X = Instruction
-			//X+1 = Source Addr
-			//X+2 = Dest Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Source Addr? ");
-			this->arg4 = getinput("Dest Addr? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::move);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			this->cpu->write(startAddr + 2, std::stoi(this->arg4));
-			loop = false;
-		}
-		if (this->arg1 == "output") 
-		{
-			//X = Instruction
-			//X+1 = Output Addr
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-			this->arg3 = getinput("Output Addr? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::out);
-			//Write each argument offest by the argument location
-			this->cpu->write(startAddr + 1, std::stoi(this->arg3));
-			loop = false;
-		}
-		if (this->arg1 == "pause") 
-		{
-			//X = Instruction
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::pause);
-			loop = false;
-		}
-		if (this->arg1 == "halt") 
-		{
-			//X = Instruction
-			int startAddr;
-			this->arg2 = getinput("Insert Address? ");
-
-			startAddr = std::stoi(this->arg2);
-
-			//Write the instruction to the start address
-			this->cpu->write(startAddr, Opcode::halt);
-			loop = false;
-		}
-	} while (loop != false);
-}
-
-void Interface::shell()
-{
-	this->input = ""; this->arg1 = ""; this->arg2 = ""; this->arg3 = ""; this->arg4 = "";
-	this->input = getinput("");
-
-	if (this->input == "help")
-	{
-		std::cout << "Avalibable Commands" << std::endl;
-		std::cout << "-------------------" << std::endl;
-		std::cout << "help" << std::endl;
-		std::cout << "run" << std::endl;
-		std::cout << "write" << std::endl;
-		std::cout << "insert" << std::endl;
-		std::cout << "dump" << std::endl;
-		std::cout << "step" << std::endl;
-		std::cout << "exit" << std::endl;
-		return;
-	}
-
-	if (this->input == "run")
-	{
-		this->cpu->run();
-		return;
-	}
-
-	if (this->input == "write")
-	{
-		this->_write();
-		return;
-	}
-
-	if (this->input == "insert")
-	{
-		this->_insert();
-		return;
-	}
-
-	if (this->input == "step")
-	{
-		this->cpu->step();
-		return;
-	}
-
-	if (this->input == "dump")
-	{
-		this->_dump();
-		return;
-	}
-
-	if (this->input == "exit")
-	{
-		exit(0);
-	}
 }

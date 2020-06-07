@@ -44,6 +44,40 @@ CPU::CPU()
 	{
 		this->ram.memory[i] = this->Assembly.halt.opcode;
 	}
+
+	this->ram.memory[0] = Opcode::write;
+	this->ram.memory[1] = 256;
+	this->ram.memory[2] = 0;
+	this->ram.memory[3] = Opcode::write;
+	this->ram.memory[4] = 257;
+	this->ram.memory[5] = 1;
+	this->ram.memory[6] = Opcode::write;
+	this->ram.memory[7] = 259;
+	this->ram.memory[8] = 102334155;
+	this->ram.memory[9] = Opcode::write;
+	this->ram.memory[10] = 260;
+	this->ram.memory[11] = 0;
+	this->ram.memory[12] = Opcode::add;
+	this->ram.memory[13] = 256;
+	this->ram.memory[14] = 257;
+	this->ram.memory[15] = 258;
+	this->ram.memory[16] = Opcode::move;
+	this->ram.memory[17] = 257;
+	this->ram.memory[18] = 256;
+	this->ram.memory[19] = Opcode::move;
+	this->ram.memory[20] = 258;
+	this->ram.memory[21] = 257;
+	this->ram.memory[22] = Opcode::jumpgt;
+	this->ram.memory[23] = 258;
+	this->ram.memory[24] = 259;
+	this->ram.memory[25] = 30;
+	this->ram.memory[26] = Opcode::out;
+	this->ram.memory[27] = 258;
+	this->ram.memory[28] = Opcode::jump;
+	this->ram.memory[29] = 12;
+	this->ram.memory[30] = Opcode::halt;
+	this->ram.memory[31] = Opcode::jump;
+	this->ram.memory[32] = 0;
 }
 
 void CPU::run()

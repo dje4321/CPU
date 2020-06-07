@@ -142,10 +142,12 @@
     <ClCompile Include="CPU.cpp" />
     <ClCompile Include="Interface.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="splitString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPU.h" />
     <ClInclude Include="Interface.h" />
+    <ClInclude Include="splitString.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

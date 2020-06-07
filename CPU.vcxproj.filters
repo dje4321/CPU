@@ -24,12 +24,18 @@
     <ClCompile Include="Interface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="splitString.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Interface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="splitString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
