@@ -14,21 +14,24 @@ CPU::CPU()
 	this->ram[0] = ASM::write;
 	this->ram[1] = 257;
 	this->ram[2] = 1;
-	this->ram[3] = ASM::add;
+	this->ram[3] = ASM::write;
 	this->ram[4] = 256;
-	this->ram[5] = 257;
-	this->ram[6] = 258;
-	this->ram[7] = ASM::move;
+	this->ram[5] = 0;
+	this->ram[6] = ASM::add;
+	this->ram[7] = 256;
 	this->ram[8] = 257;
-	this->ram[9] = 256;
+	this->ram[9] = 258;
 	this->ram[10] = ASM::move;
-	this->ram[11] = 258;
-	this->ram[12] = 257;
-	this->ram[13] = ASM::out;
+	this->ram[11] = 257;
+	this->ram[12] = 256;
+	this->ram[13] = ASM::move;
 	this->ram[14] = 258;
-	this->ram[15] = ASM::pause;
-	this->ram[16] = ASM::jump;
-	this->ram[17] = 3;
+	this->ram[15] = 257;
+	this->ram[16] = ASM::out;
+	this->ram[17] = 258;
+	this->ram[18] = ASM::pause;
+	this->ram[19] = ASM::jump;
+	this->ram[20] = 6;
 }
 
 void CPU::run()
