@@ -2,10 +2,15 @@
 
 CPU::CPU()
 {
+	this->halt = false;
+
+	//Set memory to a HALT instruction incase we leave the program space
 	for (int i = 0; i < this->_ram_size; i++)
 	{
-		this->ram[i] = 0;
+		this->ram[i] = ASM::halt;
 	}
+
+	//Calculates the fib sequence
 	this->ram[0] = ASM::write;
 	this->ram[1] = 257;
 	this->ram[2] = 1;
@@ -21,16 +26,20 @@ CPU::CPU()
 	this->ram[12] = 257;
 	this->ram[13] = ASM::out;
 	this->ram[14] = 258;
-	this->ram[15] = ASM::jump;
-	this->ram[16] = 3;
+	this->ram[15] = ASM::pause;
+	this->ram[16] = ASM::jump;
+	this->ram[17] = 3;
 }
 
 void CPU::run()
 {
-for (;;)
-{
-	this->_decode();
-}
+	//Run until a halt instruction is triggered
+	do {
+		this->_decode();
+	} while (this->halt != true);
+
+	//Set halt to false incase we want to resume control
+	this->halt = false;
 }
 
 void CPU::print(int addr)
@@ -58,6 +67,28 @@ void CPU::step()
 	this->_decode();
 	std::cout << "Addr: " << this->pc << std::endl;
 	this->_dumpIns(this->pc);
+}
+
+void CPU::_pause()
+{
+	std::string null;
+	std::cout << "Paused. Press ENTER to continue";
+	std::getline(std::cin, null);
+	this->_null();
+}
+
+void CPU::_halt()
+{
+	std::cout << "HALTING!" << std::endl;
+
+	if (this->halt == true)
+	{
+		this->halt = false;
+		this->_null();
+		return;
+	}
+	this->_null();
+	this->halt = true;
 }
 
 void CPU::_dumpIns(int addr)
@@ -107,6 +138,13 @@ void CPU::_dumpIns(int addr)
 		break;
 	case ASM::out:
 		std::cout << "Ins: " << "OUTPUT" << std::endl;
+		std::cout << "Out Addr: " << this->ram[addr + 1] << std::endl;
+		break;
+	case ASM::pause:
+		std::cout << "Ins: " << "PAUSE" << std::endl;	
+		break;
+	case ASM::halt:
+		std::cout << "Ins: " << "HALT!" << std::endl;
 		break;
 	default:
 		std::cout << "Data: " << this->ram[addr] << std::endl;
@@ -156,6 +194,12 @@ void CPU::_decode()
 		return;
 	case ASM::out:
 		this->_out();
+		return;
+	case ASM::pause:
+		this->_pause();
+		return;
+	case ASM::halt:
+		this->_halt();
 		return;
 	default: //Should never reach this and if we do, assume we encountered a NOP instruction
 		this->_null();
