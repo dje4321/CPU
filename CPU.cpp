@@ -9,11 +9,20 @@ CPU::CPU()
 	this->Assembly.null.opcode = Opcode::null;
 	this->Assembly.null.size = 1;
 
+	this->Assembly.R_read.opcode = Opcode::R_read;
+	this->Assembly.R_read.size = 3;
+
 	this->Assembly.write.opcode = Opcode::write;
 	this->Assembly.write.size = 3;
 
+	this->Assembly.R_write.opcode = Opcode::write;
+	this->Assembly.R_write.size = 3;
+
 	this->Assembly.add.opcode = Opcode::add;
 	this->Assembly.add.size = 4;
+
+	this->Assembly.R_add.opcode = Opcode::R_add;
+	this->Assembly.R_add.size = 4;
 
 	this->Assembly.subtract.opcode = Opcode::subtract;
 	this->Assembly.subtract.size = 4;
@@ -45,39 +54,60 @@ CPU::CPU()
 		this->ram.memory[i] = this->Assembly.halt.opcode;
 	}
 
-	this->ram.memory[0] = Opcode::write;
-	this->ram.memory[1] = 256;
-	this->ram.memory[2] = 0;
-	this->ram.memory[3] = Opcode::write;
-	this->ram.memory[4] = 257;
-	this->ram.memory[5] = 1;
-	this->ram.memory[6] = Opcode::write;
-	this->ram.memory[7] = 259;
-	this->ram.memory[8] = 102334155;
-	this->ram.memory[9] = Opcode::write;
-	this->ram.memory[10] = 260;
-	this->ram.memory[11] = 0;
-	this->ram.memory[12] = Opcode::add;
-	this->ram.memory[13] = 256;
-	this->ram.memory[14] = 257;
-	this->ram.memory[15] = 258;
-	this->ram.memory[16] = Opcode::move;
-	this->ram.memory[17] = 257;
-	this->ram.memory[18] = 256;
-	this->ram.memory[19] = Opcode::move;
-	this->ram.memory[20] = 258;
-	this->ram.memory[21] = 257;
-	this->ram.memory[22] = Opcode::jumpgt;
-	this->ram.memory[23] = 258;
-	this->ram.memory[24] = 259;
-	this->ram.memory[25] = 30;
-	this->ram.memory[26] = Opcode::out;
-	this->ram.memory[27] = 258;
-	this->ram.memory[28] = Opcode::jump;
-	this->ram.memory[29] = 12;
-	this->ram.memory[30] = Opcode::halt;
-	this->ram.memory[31] = Opcode::jump;
-	this->ram.memory[32] = 0;
+	this->ram.memory[0] = Opcode::R_write;
+	this->ram.memory[1] = 'A';
+	this->ram.memory[2] = 40;
+	this->ram.memory[3] = Opcode::R_write;
+	this->ram.memory[4] = 'B';
+	this->ram.memory[5] = 29;
+	this->ram.memory[6] = Opcode::R_add;
+	this->ram.memory[7] = 'A';
+	this->ram.memory[8] = 'B';
+	this->ram.memory[9] = 'z';
+	this->ram.memory[10] =  Opcode::write;
+	this->ram.memory[11] = 256;
+	this->ram.memory[12] = 0;
+	this->ram.memory[13] = Opcode::R_read;
+	this->ram.memory[14] = 'z';
+	this->ram.memory[15] = 256;
+	this->ram.memory[16] = Opcode::out;
+	this->ram.memory[17] = 256;
+	this->ram.memory[18] = Opcode::halt;
+
+	//Calculates a part of the fib seq and then HALTS
+	//this->ram.memory[0] = Opcode::write;
+	//this->ram.memory[1] = 256;
+	//this->ram.memory[2] = 0;
+	//this->ram.memory[3] = Opcode::write;
+	//this->ram.memory[4] = 257;
+	//this->ram.memory[5] = 1;
+	//this->ram.memory[6] = Opcode::write;
+	//this->ram.memory[7] = 259;
+	//this->ram.memory[8] = 102334155;
+	//this->ram.memory[9] = Opcode::write;
+	//this->ram.memory[10] = 260;
+	//this->ram.memory[11] = 0;
+	//this->ram.memory[12] = Opcode::add;
+	//this->ram.memory[13] = 256;
+	//this->ram.memory[14] = 257;
+	//this->ram.memory[15] = 258;
+	//this->ram.memory[16] = Opcode::move;
+	//this->ram.memory[17] = 257;
+	//this->ram.memory[18] = 256;
+	//this->ram.memory[19] = Opcode::move;
+	//this->ram.memory[20] = 258;
+	//this->ram.memory[21] = 257;
+	//this->ram.memory[22] = Opcode::jumpgt;
+	//this->ram.memory[23] = 258;
+	//this->ram.memory[24] = 259;
+	//this->ram.memory[25] = 30;
+	//this->ram.memory[26] = Opcode::out;
+	//this->ram.memory[27] = 258;
+	//this->ram.memory[28] = Opcode::jump;
+	//this->ram.memory[29] = 12;
+	//this->ram.memory[30] = Opcode::halt;
+	//this->ram.memory[31] = Opcode::jump;
+	//this->ram.memory[32] = 0;
 }
 
 void CPU::run()
@@ -150,6 +180,22 @@ void CPU::_dumpIns(int addr)
 		std::cout << "Src Addr B: " << this->ram.memory[addr + 2] << std::endl;
 		std::cout << "Dest Addr: " << this->ram.memory[addr + 3] << std::endl;
 		break;
+	case Opcode::R_add:
+		std::cout << "Ins: " << "Register ADD" << std::endl;
+		std::cout << "Reg 1: " << (char)this->ram.memory[addr + 1] << std::endl;
+		std::cout << "Reg 2: " << (char)this->ram.memory[addr + 2] << std::endl;
+		std::cout << "Dest Reg: " << (char)this->ram.memory[addr + 3] << std::endl;
+		break;
+	case Opcode::R_read:
+		std::cout << "Ins: " << "Register READ" << std::endl;
+		std::cout << "Reg: " << (char)this->ram.memory[addr + 1] << std::endl;
+		std::cout << "Dest Addr: " << this->ram.memory[addr + 2] << std::endl;
+		break;
+	case Opcode::R_write:
+		std::cout << "Ins: " << "Register WRITE" << std::endl;
+		std::cout << "Reg: " << (char)this->ram.memory[addr + 1] << std::endl;
+		std::cout << "Value: " << this->ram.memory[addr + 2] << std::endl;
+		break;
 	case Opcode::subtract:
 		std::cout << "Ins: " << "SUBTRACT" << std::endl;
 		std::cout << "Src Addr A: " << this->ram.memory[addr + 1] << std::endl;
@@ -220,11 +266,20 @@ void CPU::_decode()
 	case Opcode::null:
 		this->_null();
 		return;
+	case Opcode::R_read:
+		this->R_read();
+		return;
 	case Opcode::write:
 		this->_write();
 		return;
+	case Opcode::R_write:
+		this->R_write();
+		return;
 	case Opcode::add:
 		this->_add();
+		return;
+	case Opcode::R_add:
+		this->R_add();
 		return;
 	case Opcode::subtract:
 		this->_sub();
@@ -275,6 +330,19 @@ void CPU::_null()
 	this->registers.pc += this->Assembly.null.size;
 }
 
+void CPU::R_read()
+{
+	// X = Instruction
+	// X+1 = Src Reg
+	// X+2 = Dest Addr
+
+	int reg = this->ram.memory[this->registers.pc + 1];
+	int addr = this->ram.memory[this->registers.pc + 2];
+
+	this->ram.memory[addr] = this->registers.var.loc[reg];
+	this->registers.pc += this->Assembly.R_read.size;
+}
+
 void CPU::_write()
 {
 	// X = Instruction
@@ -295,6 +363,19 @@ void CPU::_write()
 
 	//3 Byte Instruction
 	this->registers.pc += this->Assembly.write.size;
+}
+
+void CPU::R_write()
+{
+	// X = Instruction
+	// X+1 = Register
+	// X+2 = Value
+
+	int reg = this->ram.memory[this->registers.pc + 1];
+	int value = this->ram.memory[this->registers.pc + 2];
+
+	this->registers.var.loc[reg] = value;
+	this->registers.pc += this->Assembly.R_write.size;
 }
 
 void CPU::_add()
@@ -323,6 +404,22 @@ void CPU::_add()
 
 	//4 Byte Instruction
 	this->registers.pc += this->Assembly.add.size;
+}
+
+void CPU::R_add()
+{
+	//X = Instruction
+	//X+1 = Src Reg 1
+	//X+2 = Src Reg 2
+	//X+3 = Dest Reg
+
+	int reg1 = this->ram.memory[this->registers.pc + 1];
+	int reg2 = this->ram.memory[this->registers.pc + 2];
+	int dest = this->ram.memory[this->registers.pc + 3];
+
+	this->registers.var.loc[dest] = this->registers.var.loc[reg1] + this->registers.var.loc[reg2];
+	this->registers.pc += this->Assembly.R_add.size;
+
 }
 
 void CPU::_sub()

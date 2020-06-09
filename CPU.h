@@ -5,8 +5,11 @@
 enum Opcode
 {
 	null = 0, //CPU::_null()
+	R_read,   //CPU::R_read()
 	write,    //CPU::_write()
+	R_write,  //CPU::R_write()
 	add,      //CPU::_add()
+	R_add,    //CPU::R_add()
 	subtract, //CPU::_sub()
 	jump,     //CPU::_jump()
 	jumpgt,   //CPU::_jumpgt()
@@ -27,8 +30,11 @@ struct Instruction
 struct ASM
 {
 	Instruction null;
+	Instruction R_read;
 	Instruction write;
+	Instruction R_write;
 	Instruction add;
+	Instruction R_add;
 	Instruction subtract;
 	Instruction jump;
 	Instruction jumpgt;
@@ -45,10 +51,17 @@ struct Ram
 	int memory[255 * 255]{ 0 };
 };
 
+struct Var
+{
+	int loc[255]{ 0 };
+	int size = 255;
+};
+
 struct Registers
 {
-	int pc;
-	bool halt;
+	bool halt = false;
+	int pc = 0;
+	Var var;
 };
 
 class CPU
@@ -69,8 +82,11 @@ private:
 private:
 	void _decode();
 	void _null();
+	void R_read();
 	void _write();
+	void R_write();
 	void _add();
+	void R_add();
 	void _sub();
 	void _jump();
 	void _jumpgt();
